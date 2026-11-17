@@ -1,0 +1,20 @@
+VER 131
+
+COMPILER "sdcc"
+LINKER "sdcc"
+
+EEXT_COMPILER_OUTPUT_ARG "-o"
+EEXT_COMPILER_OUTPUT_EXT ".rel"
+EEXT_LINKER_OUTPUT_ARG "-o"
+
+FILTER filter
+
+INCEXT filter ".c"
+
+LIST to_compile filter "src"
+
+KEEP changed to_compile
+
+COMPILE compiled_out to_compile "-MMD -I src/ -mmcs51 --model-small --std-sdcc11 --opt-code-size --code-size 0x10000 --iram-size 256 --data-loc 0x30 --stack-loc 0x7F --xram-loc 0x0400 --xram-size 0x0400"
+LINK compiled_out "uVizor.ihx" " -mmcs51 "
+RUN "makebin -p build/uVizor.ihx build/uVizor.bin"
