@@ -1,6 +1,7 @@
 #include <init/init.h>
 #include <variables.h>
 #include <registers.h>
+#include <unknown/util.h>
 
 void boot_init(void){
     EA = 0; // disable intterupts
@@ -122,5 +123,16 @@ void init_software_registers(void){
 
 void init_something_0(void){
     INTMEM(0x5C) = 10;
-    
+    uint16_t unknown_return_value;
+    unknown_return_value = _UNKNOWN0_MCU_register_setup(0x0);
+    uint8_t a_saved_value = (unknown_return_value >> 8);
+
+    if((unknown_return_value >> 8) == 0xBE){
+        _UNKNOWN0_MCU_register_clear();
+
+        // ...
+    }else{
+        // ...
+    }
+
 }
