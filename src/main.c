@@ -35,7 +35,7 @@ void main(void)
     
     // init
     boot_init();
-    init_DIP();
+    init_software_registers();
 
     for (;;) {
         reg_write(0x1, 0x0);

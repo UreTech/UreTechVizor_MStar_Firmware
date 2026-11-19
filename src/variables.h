@@ -4,9 +4,11 @@
 #include <stdint.h>
 #include <registers.h>
 
+#define INTMEM(addr) (*(volatile uint8_t*)(addr))
+
 // im not sure what these does for now
-#define UART_VAR0 (*(uint8_t*)(0x21))
-#define UART_VAR1 (*(uint8_t*)(0x22))
+#define UART_VAR0 INTMEM(0x21)
+#define UART_VAR1 INTMEM(0x22)
 
 
 

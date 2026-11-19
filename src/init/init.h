@@ -17,7 +17,10 @@ void boot_init_timers(void);
 // inits uart
 void boot_init_uart(void);
 
-// init DIP
-void init_DIP();
+// init software registers
+void init_software_registers(void);
+
+// ...
+void init_something_0(void);
 
 #endif

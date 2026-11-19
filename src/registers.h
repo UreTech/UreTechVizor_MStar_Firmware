@@ -7,19 +7,19 @@
 
 #define MAKE_REG(reg_addr) (*(volatile __xdata unsigned char *)(reg_addr))
 
-// TSUM1PFR register base address
-#define REGISTER_BASE_ADDRESS (0xC000)
+// TSUM1PFR MCU register base address
+#define MCU_REGISTER_BASE_ADDRESS (0xC000)
 
 // MCU control registers
-#define MCU_CONTROL_REGISTER_WD_SWZ1 MAKE_REG(REGISTER_BASE_ADDRESS + 0x8) // watchdog timer software disable key low byte
-#define MCU_CONTROL_REGISTER_WD_SWZ2 MAKE_REG(REGISTER_BASE_ADDRESS + 0x9) // watchdog timer software disable key high byte
-#define MCU_CONTROL_REGISTER_DDC2BI_CTRL MAKE_REG(REGISTER_BASE_ADDRESS + 0x18) // maybe for dvi? i didnt confirmed yet, this is for edid i think
-#define MCU_CONTROL_REGISTER_MCU_P0_OUT_EN MAKE_REG(REGISTER_BASE_ADDRESS + 0x30) // P0 enable force mode
-#define MCU_CONTROL_REGISTER_MCU_P0_FMD MAKE_REG(REGISTER_BASE_ADDRESS + 0x31) // P0 force mode (0: input, 1: output)
-#define MCU_CONTROL_REGISTER_MCU_P1_OUT_EN MAKE_REG(REGISTER_BASE_ADDRESS + 0x33) // P1 enable force mode
-#define MCU_CONTROL_REGISTER_MCU_P1_FMD MAKE_REG(REGISTER_BASE_ADDRESS + 0x34) // P1 force mode (0: input, 1: output)
-#define MCU_CONTROL_REGISTER_MCU_P2_OUT_EN MAKE_REG(REGISTER_BASE_ADDRESS + 0x36) // P2 enable output? or force mode?
-#define MCU_CONTROL_REGISTER_MCU_P2_FMD MAKE_REG(REGISTER_BASE_ADDRESS + 0x37) // P2 force mode (0: input, 1: output)
+#define MCU_CONTROL_REGISTER_WD_SWZ1 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x8) // watchdog timer software disable key low byte
+#define MCU_CONTROL_REGISTER_WD_SWZ2 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x9) // watchdog timer software disable key high byte
+#define MCU_CONTROL_REGISTER_DDC2BI_CTRL MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x18) // maybe for dvi? i didnt confirmed yet, this is for edid i think
+#define MCU_CONTROL_REGISTER_MCU_P0_OUT_EN MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x30) // P0 enable force mode
+#define MCU_CONTROL_REGISTER_MCU_P0_FMD MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x31) // P0 force mode (0: input, 1: output)
+#define MCU_CONTROL_REGISTER_MCU_P1_OUT_EN MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x33) // P1 enable force mode
+#define MCU_CONTROL_REGISTER_MCU_P1_FMD MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x34) // P1 force mode (0: input, 1: output)
+#define MCU_CONTROL_REGISTER_MCU_P2_OUT_EN MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x36) // P2 enable output? or force mode?
+#define MCU_CONTROL_REGISTER_MCU_P2_FMD MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x37) // P2 force mode (0: input, 1: output)
 
 #define DDC2BI_CTRL_EN_HOLD_CK ONEBIT(0)
 #define DDC2BI_CTRL_EN_NO_ACK ONEBIT(1)
@@ -137,5 +137,6 @@ __xdata __at(0x0400) volatile uint8_t EXT_MEM[1024];
 
 #define TCON_UNKNOWN_REGISTER (0x77) // it is used in init sequance but i  have  no idea what that does
 
+__xdata __at(0x0000) volatile uint8_t XDATA[0xFFFF];
 
 #endif

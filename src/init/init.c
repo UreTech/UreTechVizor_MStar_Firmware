@@ -30,8 +30,8 @@ void boot_init_mcu(void){
     MCU_CONTROL_REGISTER_MCU_P0_FMD = ONEBIT(6) | ONEBIT(7); // set P0.6 & P0.7 as output (i have no idea what these ports are, maybe leds are these?!?!)
 
     // ??? i have no idea about these
-    MAKE_REG(REGISTER_BASE_ADDRESS + 0x93) = 3;
-    MAKE_REG(REGISTER_BASE_ADDRESS + 0x91) = 1;
+    MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x93) = 3;
+    MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x91) = 1;
 
     P2 &= ~ONEBIT(7); // P2.7 low
     P0 &= ~ONEBIT(7); // P0.7 low
@@ -94,7 +94,7 @@ void boot_init_uart(void){
     return;
 }
 
-void init_DIP(){
+void init_software_registers(void){
     REGBK = 0x00; // use bank0 DIP
     reg_write(DIP_SWRST, 0); // clear DIP reset register
     RD = 1;
@@ -118,4 +118,9 @@ void init_DIP(){
     REGBK = 0x00; // use bank0 DIP
 
     return;
+}
+
+void init_something_0(void){
+    INTMEM(0x5C) = 10;
+    
 }
