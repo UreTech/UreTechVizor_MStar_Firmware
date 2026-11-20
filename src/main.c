@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <registers.h>
 #include <init/init.h>
+#include <variables.h>
 
 // boot init for SoC
 uint8_t __sdcc_external_startup(void)
@@ -14,17 +15,54 @@ uint8_t __sdcc_external_startup(void)
     uint16_t n = 0x0400;
 
     P3 &= (uint8_t)~0x20; // stay in flash bank 0
-    MCU_CONTROL_REGISTER_WD_SWZ1 = 0x55;
+    MCU_CONTROL_REGISTER_WD_SWZ1 = 0x55; // wdt disable
     MCU_CONTROL_REGISTER_WD_SWZ2 = 0xAA;
     while (n--) *p++ = 0; // we need to fill 0x0400-0x07FF with zero
     return 0;
 }
 
 // interrupt handlers
-void ex0_isr(void)   __interrupt(0) { }   // external interrupt 0
-void timer0_isr(void)__interrupt(1) { }   // timer 0
-void ex1_isr(void)   __interrupt(2) { }   // external interrupt 1 or 0x0013 (scaler / DDC interrupt)
-void serial_isr(void)__interrupt(4) { }   // serial interrupt
+
+// external interrupt 0
+void ex0_isr(void)   __interrupt(0){
+    if((IRQ_STATE & 0x0C) == 0){
+        P1 |= ONEBIT(2);
+        EVENT_FLAGS |= ONEBIT(0);
+        EVENT_042D = 0;
+        IRQ_STATE |= 0x0C;
+    }
+    IE0 = 0; // clear interrupt
+}
+
+// timer 0
+void timer0_isr(void)__interrupt(1){
+    TH0 = 0xF6;
+    TL0 = 0xAE;
+    if(TIME_COUNTER_LOW-- == 0){
+        TIME_COUNTER_HIGH--;
+    }
+    if(UART_TMO){
+        UART_TMO--;
+    }
+    if(GATE20){
+        GATE20--;
+    }
+    // ??
+    uint16_t counter;
+}
+
+// external interrupt 1 or 0x0013 (scaler / DDC interrupt)
+void ex1_isr(void)   __interrupt(2){
+    if(XDATA[MCU_REGISTER_BASE_ADDRESS + 0x11] & 0x18){
+        // call something?
+    }
+    IE1 = 0; // clear interrupt
+}
+
+// serial interrupt (not used)
+void serial_isr(void)__interrupt(4){ 
+    // not used
+}
 
 void main(void)
 {
@@ -36,7 +74,7 @@ void main(void)
     // init
     boot_init();
     init_software_registers();
-    init_something_0();
+    init_something_in_MCU();
     
     for (;;) {
         reg_write(0x1, 0x0);

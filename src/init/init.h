@@ -21,6 +21,6 @@ void boot_init_uart(void);
 void init_software_registers(void);
 
 // ...
-void init_something_0(void);
+void init_something_in_MCU(void);
 
 #endif

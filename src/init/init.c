@@ -2,6 +2,7 @@
 #include <variables.h>
 #include <registers.h>
 #include <unknown/util.h>
+#include <timer/timer.h>
 
 void boot_init(void){
     EA = 0; // disable intterupts
@@ -9,7 +10,7 @@ void boot_init(void){
     boot_init_interrupts();
     boot_init_timers();
 
-    EA = 0; // enable intterupts
+    EA = 1; // enable intterupts
 
     return;
 }
@@ -31,8 +32,8 @@ void boot_init_mcu(void){
     MCU_CONTROL_REGISTER_MCU_P0_FMD = ONEBIT(6) | ONEBIT(7); // set P0.6 & P0.7 as output (i have no idea what these ports are, maybe leds are these?!?!)
 
     // ??? i have no idea about these
-    MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x93) = 3;
-    MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x91) = 1;
+    XDATA[MCU_REGISTER_BASE_ADDRESS + 0x93] = 3;
+    XDATA[MCU_REGISTER_BASE_ADDRESS + 0x91] = 1;
 
     P2 &= ~ONEBIT(7); // P2.7 low
     P0 &= ~ONEBIT(7); // P0.7 low
@@ -121,18 +122,54 @@ void init_software_registers(void){
     return;
 }
 
-void init_something_0(void){
-    INTMEM(0x5C) = 10;
+void init_something_in_MCU(void){
     uint16_t unknown_return_value;
     unknown_return_value = _UNKNOWN0_MCU_register_setup(0x0);
     uint8_t a_saved_value = (unknown_return_value >> 8);
 
     if((unknown_return_value >> 8) == 0xBE){
         _UNKNOWN0_MCU_register_clear();
-
-        // ...
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x40] = 0x50;
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x41] = 0x01;
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x42] = 0x8C;
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x48] = 0xC8;
     }else{
-        // ...
+        _UNKNOWN0_MCU_register_clear();
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x40] = 0x06;
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x48] = 0xF8;
+
+        uint8_t timeout_counter = 10;
+        while (1){
+            if (!(XDATA[0xC048] & 0x80)) break;
+        
+            uint8_t previous = timeout_counter;
+            timeout_counter--;
+        
+            if (previous == 0) break;
+        
+            delay_ms(1);
+        }
+
+        _UNKNOWN0_MCU_register_clear();
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x40] = 0x01;
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x41] = 0x8C;
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x41] = 0x01;
+        XDATA[MCU_REGISTER_BASE_ADDRESS + 0x48] = 0xF9;
     }
 
+    uint8_t timeout = 10;
+
+    while (1)
+    {
+        if (!(XDATA[0xC048] & 0x80)) break;
+
+        uint8_t previous = timeout--;
+
+        if (previous == 0) break;
+
+        delay_ms(1);
+    }
+
+    P2 &= ~ONEBIT(7);
+    return;
 }
