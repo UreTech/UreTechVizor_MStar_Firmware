@@ -13,6 +13,7 @@
 // MCU control registers
 #define MCU_CONTROL_REGISTER_WD_SWZ1 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x8) // watchdog timer software disable key low byte
 #define MCU_CONTROL_REGISTER_WD_SWZ2 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x9) // watchdog timer software disable key high byte
+#define MCU_CONTROL_REGISTER_UNKNOWN_INTERRUPT_RELATED_C011 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x11) // ???
 #define MCU_CONTROL_REGISTER_DDC2BI_CTRL MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x18) // maybe for dvi? i didnt confirmed yet, this is for edid i think
 #define MCU_CONTROL_REGISTER_MCU_P0_OUT_EN MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x30) // P0 enable force mode
 #define MCU_CONTROL_REGISTER_MCU_P0_FMD MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x31) // P0 force mode (0: input, 1: output)
