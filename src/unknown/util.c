@@ -1,5 +1,6 @@
 #include <unknown/util.h>
 #include <variables.h>
+#include <timer/timer.h>
 
 void _UNKNOWN0_MCU_register_clear(void)
 {

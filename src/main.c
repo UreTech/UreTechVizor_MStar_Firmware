@@ -107,21 +107,38 @@ void timer0_isr(void)__interrupt(1){
     TF0 = 0;
 }
 
+// B1_7E65
 // external interrupt 1 or 0x0013 (scaler / DDC interrupt)
+uint8_t unknown_var_B2R1;
+uint16_t unknown_var_B1R1_B1R2_16BIT;
+uint8_t unknown_var_B1R6;
 void ex1_isr(void)   __interrupt(2){
     // this is very sketchy logic
-    // i think this thing is pointing the source of the interrupt in scaler
-    uint8_t unknown_interrupt_state = MCU_CONTROL_REGISTER_UNKNOWN_INTERRUPT_RELATED_C011 & (ONEBIT(4) | ONEBIT(3));
-    if(unknown_interrupt_state != 0){
-        if(unknown_interrupt_state != ONEBIT(3)){
-            if(unknown_interrupt_state != ONEBIT(4)){
+    uint8_t adc_interrupt_flags = MCU_CONTROL_REGISTER_ADC_INT_FLAG & (MCU_CONTROL_REGISTER_ADC_INT_DATR_FLAG | MCU_CONTROL_REGISTER_ADC_INT_DATW_FLAG);
+    /*
+    THIS SECTION IS RELATED TO DDCCI COMMUNICATION
+    AND NOT IMPLEMENTED YET
+    if(adc_interrupt_flags != 0){
+        if(adc_interrupt_flags != MCU_CONTROL_REGISTER_ADC_INT_DATW_FLAG){
+            if(adc_interrupt_flags != MCU_CONTROL_REGISTER_ADC_INT_DATR_FLAG){
+                IE1 = 0; // clear interrupt
                 return; // should not reach here? i think?
             }
+            unknown_var_B2R1 = 6;
+            if(unknown_var_B1R6 == 0){
+                unknown_var_B2R1 = 0;
+                MCU_CONTROL_REGISTER_ADC_RBUF_WDP = unknown_var_B1R6;
+                IE1 = 0; // clear interrupt
+                return;
+            }
 
+            unknown_var_B1R1_B1R2_16BIT++;
             
         }
 
     }
+    */
+
     IE1 = 0; // clear interrupt
 }
 
@@ -140,7 +157,8 @@ void main(void)
     // init
     boot_init();
     init_software_registers();
-    init_something_in_MCU();
+    uint8_t result_low_mcu = init_something_in_MCU();
+    
     
     for (;;) {
         reg_write(0x1, 0x0);

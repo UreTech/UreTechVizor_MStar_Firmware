@@ -78,10 +78,12 @@ void boot_init_timers(void){
     return;
 }
 
+uint8_t uart_var0;
+uint8_t uart_var1;
 void boot_init_uart(void){
     // idk what these for
-    UART_VAR0 = 0xFF;
-    UART_VAR1 = 0xA3;
+    uart_var0 = 0xFF;
+    uart_var1 = 0xA3;
 
     PCON = PCON_SMOD; // double baudrate?
     SCON = SCON_TI | SCON_REN | SCON_SM1;
@@ -122,7 +124,7 @@ void init_software_registers(void){
     return;
 }
 
-void init_something_in_MCU(void){
+uint16_t init_something_in_MCU(void){
     uint16_t unknown_return_value;
     unknown_return_value = _UNKNOWN0_MCU_register_setup(0x0);
     uint8_t a_saved_value = (unknown_return_value >> 8);
@@ -171,5 +173,5 @@ void init_something_in_MCU(void){
     }
 
     P2 &= ~ONEBIT(7);
-    return;
+    return unknown_return_value;
 }

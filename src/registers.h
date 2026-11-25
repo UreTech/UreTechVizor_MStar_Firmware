@@ -13,7 +13,18 @@
 // MCU control registers
 #define MCU_CONTROL_REGISTER_WD_SWZ1 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x8) // watchdog timer software disable key low byte
 #define MCU_CONTROL_REGISTER_WD_SWZ2 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x9) // watchdog timer software disable key high byte
-#define MCU_CONTROL_REGISTER_UNKNOWN_INTERRUPT_RELATED_C011 MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x11) // ???
+
+#define MCU_CONTROL_REGISTER_ADC_INT_FLAG MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x11) // interrupt flags
+#define MCU_CONTROL_REGISTER_ADC_INT_ID_FLAG ONEBIT(0)
+#define MCU_CONTROL_REGISTER_ADC_INT_ADR_FLAG ONEBIT(1)
+#define MCU_CONTROL_REGISTER_ADC_INT_RW_FLAG ONEBIT(2)
+#define MCU_CONTROL_REGISTER_ADC_INT_DATW_FLAG ONEBIT(3)
+#define MCU_CONTROL_REGISTER_ADC_INT_DATR_FLAG ONEBIT(4)
+#define MCU_CONTROL_REGISTER_ADC_INT_STOP_FLAG ONEBIT(5)
+#define MCU_CONTROL_REGISTER_ADC_INT_START_FLAG ONEBIT(6)
+
+#define MCU_CONTROL_REGISTER_ADC_WBUF_RDP MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x12) // DDCCI
+#define MCU_CONTROL_REGISTER_ADC_RBUF_WDP MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x13) // DDCCI
 #define MCU_CONTROL_REGISTER_DDC2BI_CTRL MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x18) // maybe for dvi? i didnt confirmed yet, this is for edid i think
 #define MCU_CONTROL_REGISTER_MCU_P0_OUT_EN MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x30) // P0 enable force mode
 #define MCU_CONTROL_REGISTER_MCU_P0_FMD MAKE_REG(MCU_REGISTER_BASE_ADDRESS + 0x31) // P0 force mode (0: input, 1: output)
@@ -112,7 +123,7 @@ __xdata __at(0x0400) volatile uint8_t EXT_MEM[1024];
 #define DIP_PDMD_NORMAL (0b00) // normal
 #define DIP_PDMD_OSD_ONLY (0b01) // only osd (for no input signal screen)
 #define DIP_PDMD_PD0 (0b10) // BIU, mode detection, GOUT are functional
-#define DIP_PDMD_PD0 (0b11) // all chip power down
+#define DIP_PDMD_PD1 (0b11) // all chip power down
 #define DIP_PDMD_GCLK_NORMAL (0b00) // normal
 #define DIP_PDMD_GCLK_VBLANK (0b01) // vblank for sram?
 #define DIP_PDMD_GCLK_HVBLANK (0b10) // h & v blank

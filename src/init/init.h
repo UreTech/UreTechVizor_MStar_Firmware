@@ -3,6 +3,9 @@
 
 #include <registers.h>
 
+extern uint8_t uart_var0;
+extern uint8_t uart_var1;
+
 void boot_init(void);
 
 // inits mcu for boot
@@ -21,6 +24,6 @@ void boot_init_uart(void);
 void init_software_registers(void);
 
 // ...
-void init_something_in_MCU(void);
+uint16_t init_something_in_MCU(void);
 
 #endif
