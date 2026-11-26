@@ -191,6 +191,34 @@ void init_DIP(void){
     reg_write16(DIP_OIHEND, 1514); // horizontal output end (1514 idk why this value)
     reg_write16(DIP_OIVEND, 899); // vertical output end (899 is end index of 1400x900 panel)
     reg_write16(DIP_VDTOT, 939); // idk why this value is used here
-    
+    reg_write16(DIP_VSST, 900); // vsync related
+    reg_write16(DIP_VSEND, 902); // vsync related
+    reg_write16(DIP_HDTOT, 1839); // idk why this value is used here
 
+    reg_write(DIP_HSEND, 34); // idk why this value is used here
+
+    // output signal control setup
+    reg_write(DIP_OSCTRL1, DIP_OSCTRL1_CTRL_FLAG | DIP_OSCTRL1_AHRT_FLAG | DIP_OSCTRL1_HRSM_FLAG | DIP_OSCTRL1_UNKNOWN0_FLAG);
+    reg_write(DIP_OSCTRL2, DIP_OSCTRL2_UNKNOWN0_FLAG);
+
+    // output control setup
+    reg_write(DIP_OCTRL1, DIP_OCTRL1_LTIM);
+    reg_write(DIP_OCTRL2, DIP_OCTRL2_DPO | DIP_OCTRL2_DPX | DIP_OCTRL2_DOT);
+    reg_write(DIP_OCTRL3, DIP_OCTRL3_CKSEL_TTL_OUTPUT); // this is makes no sense
+
+    reg_write(DIP_OSCTRL, 0);
+
+    reg_write(DIP_ODRV, DIP_ODRV_EVENDRV_6mA | DIP_ODRV_ODDDRV_6mA | DIP_ODRV_CLKDRV_6mA | DIP_ODRV_DEDRV_6mA);
+
+    reg_write(DIP_PLLCTRL1, 0);
+    reg_write(DIP_PLLCTRL2, 0);
+
+    reg_write(DIP_MDCTRL, DIP_MDCTRL_IFI_FLAG);
+
+    reg_write(DIP_MPLL_M, DIP_MPLL_M_MAKE_CURRENT_CONTROL(3) | DIP_MPLL_M_MAKE_PLL_DIVIDER(15));
+    reg_write(DIP_LPLL_M, DIP_LPLL_M_MAKE_PLL_DIVIDER(8) | DIP_LPLL_M_UNKNOWN0_FLAG);
+    reg_write(DIP_LPLL_CTL2, DIP_LPLL_CTL2_LP_ICTROL_USED_UNKNOWN | DIP_LPLL_CTL2_LP_K_DIV1);
+    
+    reg_write16(DIP_LPLL_STEP, 0x44); // idk why this value is used here
+    reg_write16(DIP_LPLL_SPAN, 0x1CC); // idk why this value is used here
 }

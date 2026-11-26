@@ -138,6 +138,106 @@ __xdata __at(0x0400) volatile uint8_t EXT_MEM[1024];
 #define DIP_OIVEND (0x1A) // Output Image window Vertical END (16bit: 0x1A & 0x1B)
 #define DIP_OIHEND (0x1C) // Output Image window Horizontal END (16bit: 0x1C & 0x1D)
 #define DIP_VDTOT (0x1E) // Output Vertical Total (16bit: 0x1E & 0x1F)
+#define DIP_VSST (0x20) // Output VSYNC start (only useful when AOVS=1) (16bit: 0x20 & 0x21)
+#define DIP_VSEND (0x22) // Output VSYNC END (only useful when AOVS=1) (16bit: 0x20 & 0x21)
+#define DIP_HDTOT (0x24) // Output Horizontal Total (16bit: 0x24 & 0x25)
+
+#define DIP_HSEND (0x26) // Output HSYNC Pulse width
+
+#define DIP_OSCTRL1 (0x27) // Output signal control register 1?
+#define DIP_OSCTRL1_CTRL_FLAG ONEBIT(0)
+#define DIP_OSCTRL1_AHRT_FLAG ONEBIT(1) // Auto H total and Read start Tuning enable
+#define DIP_OSCTRL1_EHTT_FLAG ONEBIT(3) // Even H Total (1: output h always odd pixels)
+#define DIP_OSCTRL1_VSGP_FLAG ONEBIT(4) // VSYNC use GPO9 (1: enable (using Bank 2 register 0x59 – 0x61 to define OVSYNC))
+#define DIP_OSCTRL1_HRSM_FLAG ONEBIT(5) // HSYNC Remove Mode (1: Remove HSYNC when GPOA (Bank 2 register 0x62 – 0x6A) is low)
+#define DIP_OSCTRL1_UNKNOWN0_FLAG ONEBIT(6) // it is used but idk what that is
+#define DIP_OSCTRL1_AOVS_FLAG ONEBIT(7) // Auto Output VSYNC (0: OVSYNC is defined automatically)
+
+#define DIP_OSCTRL2 (0x28) // Output signal control register 2?
+#define DIP_OSCTRL2_UNKNOWN0_FLAG ONEBIT(5) // it is used but idk what that is
+
+#define DIP_OCTRL1 (0x42) // Output control register 1?
+#define DIP_OCTRL1_ERBX ONEBIT(0) // Even channel Red/Blue bus Exchange
+#define DIP_OCTRL1_ORBX ONEBIT(1) // Odd channel Red/Blue bus Exchange
+#define DIP_OCTRL1_EMLX ONEBIT(2) // Even channel MSB/LSB Exchange
+#define DIP_OCTRL1_OMLX ONEBIT(3) // Odd channel MSB/LSB Exchange
+#define DIP_OCTRL1_LTIM ONEBIT(4) // LVDS TI Mode Enable
+#define DIP_OCTRL1_MLXT ONEBIT(5) // MSB/LSB Exchange Type (0: Always reverse bit[7:0], 1: Reverse bit[7:2] when 6-bit panel)
+#define DIP_OCTRL1_LCS ONEBIT(6) // LVDS Channel Swap
+#define DIP_OCTRL1_LCPS ONEBIT(7) // LVDS Channel Polarity Swap (P/N swap)
+
+#define DIP_OCTRL2 (0x43) // Output control register 2?
+#define DIP_OCTRL2_DPO ONEBIT(0) // Dual Pixel Output (1: Dual pixel)
+#define DIP_OCTRL2_DPX ONEBIT(1) // A/B Port Swap (only used when DPO=1)
+#define DIP_OCTRL2_STO ONEBIT(2) // Stagger Output (only used when DPO=1)
+#define DIP_OCTRL2_REV ONEBIT(3) // Reverse luminosity (1: on)
+#define DIP_OCTRL2_BLSK ONEBIT(4) // Black Screen (screen off)
+#define DIP_OCTRL2_WHTS ONEBIT(5) // White Screen (screen off)
+#define DIP_OCTRL2_DOT ONEBIT(6) // Differential Output Type (0: LVDS/RSDS, 1: Reduced-swing LVDS/increased-swing RSDS)
+#define DIP_OCTRL2_TCOP ONEBIT(7) // TCON Control Pin port select (only used when )BN=1, 6-bit output)
+
+#define DIP_OCTRL3 (0x44) // Output control register 3???
+#define DIP_OCTRL3_CKSEL_MASK (0b11111)
+#define DIP_OCTRL3_CKSEL_TTL_OUTPUT (0x0)
+#define DIP_OCTRL3_CKSEL_LVDS_OUTPUT (0x1)
+
+#define DIP_PLLCTRL1 (0xD0) // PLL control register 1?
+#define DIP_PLLCTRL1_LRTM_FLAG ONEBIT(0) // LVDS/RSDS Test Mode enable
+#define DIP_PLLCTRL1_PTEN_FLAG ONEBIT(1) // PLL Test register protect bit
+#define DIP_PLLCTRL1_TSTM_FLAG ONEBIT(2) // Test Mode
+#define DIP_PLLCTRL1_BPM_FLAG ONEBIT(3) // Bypass clock Mode (IDCLK as ODCLK) (0: disable)
+#define DIP_PLLCTRL1_XDIV_MASK (0b00110000) // XTAL clock Divided by
+#define DIP_PLLCTRL1_XDIV_16   (0b00000000)
+#define DIP_PLLCTRL1_XDIV_08   (0b00010000)
+#define DIP_PLLCTRL1_XDIV_04   (0b00100000)
+#define DIP_PLLCTRL1_XDIV_01   (0b00110000)
+#define DIP_PLLCTRL1_EOCK_FLAG ONEBIT(6) // Use External Clock (pin #) as Output Dot Clock (1: use external dot clock)
+#define DIP_PLLCTRL1_XOUT_FLAG ONEBIT(7) // Enable PWM1 as XTAL clock output
+
+#define DIP_PLLCTRL2 (0xD1) // PLL control register 2?
+#define DIP_PLLCTRL2_MP_PD ONEBIT(0) // Master PLL Power Down
+#define DIP_PLLCTRL2_MP_RST ONEBIT(1) // Master PLL Reset
+#define DIP_PLLCTRL2_MP_PORT ONEBIT(2) // Master PLL Power On Reset
+#define DIP_PLLCTRL2_MP_K ONEBIT(3) // Master PLL output frequency divided by 2
+#define DIP_PLLCTRL2_LP_PD ONEBIT(4) // Output PLL Power Down
+#define DIP_PLLCTRL2_LP_RST ONEBIT(5) // Output PLL Reset
+#define DIP_PLLCTRL2_LP_POR ONEBIT(6) // Output PLL Power On Reset
+#define DIP_PLLCTRL2_MPPDIV ONEBIT(7) // Master PLL Post Divider (0: div 3 (143 MHz) ; 1: div 2.5 (172 MHz), for output dot clock higher than 143 MHz (vertical = 85 MHz))
+
+#define DIP_MPLL_M (0xD2) // Master PLL register?
+#define DIP_MPLL_M_CURRENT_CONTROL_MASK (0b11100000) // current control?
+#define DIP_MPLL_M_MAKE_CURRENT_CONTROL(val) (((uint8_t)val << 5) & DIP_MPLL_M_CURRENT_CONTROL_MASK)
+#define DIP_MPLL_M_PLL_DIVIDER_MASK     (0b00011111) // pll div control?
+#define DIP_MPLL_M_MAKE_PLL_DIVIDER(val) ((uint8_t)val & DIP_MPLL_M_PLL_DIVIDER_MASK)
+
+#define DIP_LPLL_M (0xD3) // Output PLL register?
+#define DIP_LPLL_M_PLL_DIVIDER_MASK     (0b00011111) // pll div control?
+#define DIP_LPLL_M_MAKE_PLL_DIVIDER(val) ((uint8_t)val & DIP_LPLL_M_PLL_DIVIDER_MASK)
+#define DIP_LPLL_M_SDMD_FLAG ONEBIT(5) // Output PLL spread spectrum Mode (0: Normal, 1: Reverse for mode 1)
+#define DIP_LPLL_M_UNKNOWN0_FLAG ONEBIT(6) // it is used but idk what that is
+
+#define DIP_LPLL_CTL2 (0xD4) // Output PLL control register 2?
+#define DIP_LPLL_CTL2_LP_ICTROL_MASK (0b00000111) // Output PLL Current Control
+#define DIP_LPLL_CTL2_LP_ICTROL_USED_UNKNOWN (0b00000011) // it is used but idk why this value
+#define DIP_LPLL_CTL2_LP_K_MASK      (0b00011000) // Output PLL divider 2
+#define DIP_LPLL_CTL2_LP_K_DIV8      (0b00000000)
+#define DIP_LPLL_CTL2_LP_K_DIV4      (0b00001000)
+#define DIP_LPLL_CTL2_LP_K_DIV2      (0b00010000)
+#define DIP_LPLL_CTL2_LP_K_DIV1      (0b00011000)
+#define DIP_LPLL_CTL2_LP_TP_FLAG ONEBIT(5) // Output PLL Type (0: LVDS, 1: RSDS/TTL)
+
+#define DIP_LPLL_STEP (0xD8) // Output PLL spread spectrum Step (16bit: 0xD8 & 0xD9)
+#define DIP_LPLL_SPAN (0xDA) // Output PLL spread spectrum Span (16bit: 0xDA & 0xDB)
+
+#define DIP_MDCTRL (0xE9) // mode control register?
+#define DIP_MDCTRL_IFI_FLAG ONEBIT(0) // Interlace Field Invert
+#define DIP_MDCTRL_INTF_FLAG ONEBIT(1) // Interlace Field detect method select (0: Use the HSYNC numbers of a field to judge, 1: Use the relationship of VSYNC and HSYNC to judge)
+#define DIP_MDCTRL_VEXF_FLAG ONEBIT(2) // Video External Field (0: Use result of internal circuit detection, 1: Use external field)
+#define DIP_MDCTRL_VFIV_FLAG ONEBIT(3) // Video Field Inversion
+#define DIP_MDCTRL_SCSEL0_FLAG ONEBIT(4) // soft compat?
+#define DIP_MDCTRL_SCSEL1_FLAG ONEBIT(5) // soft compat?
+#define DIP_MDCTRL_VERR_FLAG ONEBIT(6) // Video CCIR656 Error correct
+#define DIP_MDCTRL_RCFCPB_FLAG ONEBIT(7) // Resolution conversion filter Compatible select (0: Compatible with old filter, 1: Use new filter)
 
 #define DIP_PDMD (0xF0) // power down mode register
 #define DIP_PDMD_NORMAL (0b00) // normal
@@ -162,6 +262,35 @@ __xdata __at(0x0400) volatile uint8_t EXT_MEM[1024];
 #define DIP_SWRST_ADCR ONEBIT(5) // ADC reset
 #define DIP_SWRST_UNKNOWN ONEBIT(6) // i have no idea
 #define DIP_SWRST_DPDMD ONEBIT(7) // deep power down mode (1: enable, 0: disable)
+
+#define DIP_OSCTRL (0xF2) // Output signal control register ???
+#define DIP_OSCTRL_OHS_FLAG ONEBIT(0) // Output HSYNC control (0: Active high, 1: Active low)
+#define DIP_OSCTRL_OVS_FLAG ONEBIT(1) // Output VSYNC control (0: Active high, 1: Active low)
+#define DIP_OSCTRL_ODE_FLAG ONEBIT(2) // Output DE control (0: Active high, 1: Active low)
+#define DIP_OSCTRL_OCLK_FLAG ONEBIT(3) // Output CLK control (0: Active high, 1: Active low)
+// ...
+
+#define DIP_ODRV (0xF5) // Output driver register ???
+#define DIP_ODRV_EVENDRV_MASK (0b00000011) // Output data Even channel Driving current select
+#define DIP_ODRV_EVENDRV_4mA  (0b00000000)
+#define DIP_ODRV_EVENDRV_6mA  (0b00000001)
+#define DIP_ODRV_EVENDRV_8mA  (0b00000010)
+#define DIP_ODRV_EVENDRV_12mA (0b00000011)
+#define DIP_ODRV_ODDDRV_MASK (0b00001100) // Output data Odd channel Driving current select
+#define DIP_ODRV_ODDDRV_4mA  (0b00000000)
+#define DIP_ODRV_ODDDRV_6mA  (0b00000100)
+#define DIP_ODRV_ODDDRV_8mA  (0b00001000)
+#define DIP_ODRV_ODDDRV_12mA (0b00001100)
+#define DIP_ODRV_CLKDRV_MASK (0b00110000) // Output Clock Driving current select
+#define DIP_ODRV_CLKDRV_4mA  (0b00000000)
+#define DIP_ODRV_CLKDRV_6mA  (0b00010000)
+#define DIP_ODRV_CLKDRV_8mA  (0b00100000)
+#define DIP_ODRV_CLKDRV_12mA (0b00110000)
+#define DIP_ODRV_DEDRV_MASK (0b11000000) // Output DE Driving current select
+#define DIP_ODRV_DEDRV_4mA  (0b00000000)
+#define DIP_ODRV_DEDRV_6mA  (0b01000000)
+#define DIP_ODRV_DEDRV_8mA  (0b10000000)
+#define DIP_ODRV_DEDRV_12mA (0b11000000)
 
 #define DIP_TEST (0xF8) // test register for self test?
 #define DIP_TEST_TESTMD (0b0110) // VS/HS/DE output while LVDS output
