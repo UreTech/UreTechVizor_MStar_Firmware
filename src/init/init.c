@@ -98,13 +98,14 @@ void boot_init_uart(void){
     return;
 }
 
-void init_software_registers(void){
-    REGBK = 0x00; // use bank0 DIP
+void software_reset_DIP(void){
+    SWITCH_DIP_BK(); // use bank0 DIP
     reg_write(DIP_SWRST, 0); // clear DIP reset register
     RD = 1;
     delay_ms(5);
-    RD = 0;
-    REGBK = 0x00; // use bank0 DIP
+    RD = 0;    
+    SWITCH_DIP_BK(); // use bank0 DIP
+
     reg_write(DIP_DBFC, 0); // double buffer disable
     reg_write(DIP_SWRST, DIP_SWRST_SWR | DIP_SWRST_OSDR | DIP_SWRST_BIUR | DIP_SWRST_DPR | DIP_SWRST_GPR | DIP_SWRST_ADCR); // reset
     delay_ms(2);
@@ -112,14 +113,15 @@ void init_software_registers(void){
     reg_write(DIP_PDMD, DIP_PDMD_GCLK_APDLA); // power down mode
     reg_write(DIP_TEST, 0); // disable test mode
 
-    REGBK = 0x02; // use bank2 TCON
+    SWITCH_TCON_BK(); // use bank2 TCON
 
     // this thing is probably init sequance for timers & clocks but i have no documentataion for it
     reg_write(TCON_UNKNOWN_REGISTER, 0x20);
     uint8_t read_value;
     read_value = reg_read(TCON_UNKNOWN_REGISTER);
     reg_write(TCON_UNKNOWN_REGISTER, read_value | 0x40);
-    REGBK = 0x00; // use bank0 DIP
+
+    SWITCH_DIP_BK(); // use bank0 DIP
 
     return;
 }
@@ -174,4 +176,21 @@ uint16_t init_something_in_MCU(void){
 
     P2 &= ~ONEBIT(7);
     return unknown_return_value;
+}
+
+void init_DIP(void){
+    software_reset_DIP();
+    SWITCH_DIP_BK();
+    reg_write(DIP_PDMD, DIP_PDMD_GCLK_APDLA);
+    reg_write(DIP_TEST, 0);
+    reg_write16(DIP_DEVST, 0); // vertical output start (0)
+    reg_write16(DIP_DEVEND, 899); // vertical output end (899 is end index of 1400x900 panel)
+    reg_write16(DIP_DEHST, 75); // horizontal output start (75?)
+    reg_write16(DIP_DEHEND, 1514); // horizontal output end (1514 idk why this value)
+    reg_write16(DIP_OIHST, 75); // // horizontal output start (75?)
+    reg_write16(DIP_OIHEND, 1514); // horizontal output end (1514 idk why this value)
+    reg_write16(DIP_OIVEND, 899); // vertical output end (899 is end index of 1400x900 panel)
+    reg_write16(DIP_VDTOT, 939); // idk why this value is used here
+    
+
 }

@@ -156,7 +156,7 @@ void main(void)
     
     // init
     boot_init();
-    init_software_registers();
+    software_reset_DIP();
     uint8_t result_low_mcu = init_something_in_MCU();
     
     

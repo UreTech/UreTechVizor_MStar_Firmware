@@ -99,6 +99,10 @@ __sbit __at(0xB7) RD;
 // scaler register window: XDATA 0x0000..0x00FF, index 0 = REGBK
 __xdata __at(0x0000) volatile uint8_t SC[256];
 #define REGBK   SC[0x00]
+#define SWITCH_DIP_BK() REGBK = 0x00;
+#define SWITCH_ADC_BK() REGBK = 0x01;
+#define SWITCH_TCON_BK() REGBK = 0x02;
+#define SWITCH_MWE_BK() REGBK = 0x03;
 
 #define REGBK_PORR ONEBIT(7) // power on reset ready
 #define REGBK_B6 ONEBIT(6) // idk what is this
@@ -108,8 +112,15 @@ __xdata __at(0x0000) volatile uint8_t SC[256];
 static void reg_write(uint8_t reg, uint8_t val){
     SC[reg] = val;
 }
+static void reg_write16(uint8_t reg, uint16_t val){
+    SC[reg] = val;
+    SC[reg + 1] = (val >> 8);
+}
 static uint8_t reg_read(uint8_t reg){ 
     return SC[reg];
+}
+static uint16_t reg_read16(uint8_t reg){ 
+    return (uint16_t)SC[reg] | ((uint16_t)SC[reg + 1] << 8);
 }
 
 __xdata __at(0x0400) volatile uint8_t EXT_MEM[1024];
@@ -117,7 +128,16 @@ __xdata __at(0x0400) volatile uint8_t EXT_MEM[1024];
 // hardware registers
 
 // BANK 0 - DIP
-#define DIP_DBFC (0x01)
+#define DIP_DBFC (0x01) // double buffer control
+
+#define DIP_DEVST (0x10) // Output DE Vertical Start (16bit: 0x10 & 0x11)
+#define DIP_DEHST (0x12) // Output DE Horizontal Start (16bit: 0x12 & 0x13)
+#define DIP_DEVEND (0x14) // Output DE Vertical End (16bit: 0x14 & 0x15)
+#define DIP_DEHEND (0x16) // Output DE Horizontal End (16bit: 0x16 & 0x17)
+#define DIP_OIHST (0x18) // Output Image window Horizontal Start (16bit: 0x18 & 0x19)
+#define DIP_OIVEND (0x1A) // Output Image window Vertical END (16bit: 0x1A & 0x1B)
+#define DIP_OIHEND (0x1C) // Output Image window Horizontal END (16bit: 0x1C & 0x1D)
+#define DIP_VDTOT (0x1E) // Output Vertical Total (16bit: 0x1E & 0x1F)
 
 #define DIP_PDMD (0xF0) // power down mode register
 #define DIP_PDMD_NORMAL (0b00) // normal
