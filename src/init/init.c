@@ -98,7 +98,7 @@ void boot_init_uart(void){
     return;
 }
 
-void software_reset_DIP(void){
+void software_reset_external_devices(void){
     SWITCH_DIP_BK(); // use bank0 DIP
     reg_write(DIP_SWRST, 0); // clear DIP reset register
     RD = 1;
@@ -126,12 +126,10 @@ void software_reset_DIP(void){
     return;
 }
 
-uint16_t init_something_in_MCU(void){
-    uint16_t unknown_return_value;
-    unknown_return_value = _UNKNOWN0_MCU_register_setup(0x0);
-    uint8_t a_saved_value = (unknown_return_value >> 8);
+uint16_t do_something_in_MCU(void){
+    UNKNOWN_MCU_REGISTER_SAVED_VAR_042E = _UNKNOWN0_MCU_register_something(0x0);
 
-    if((unknown_return_value >> 8) == 0xBE){
+    if(UNKNOWN_MCU_REGISTER_SAVED_VAR_042E == 0xBF){
         _UNKNOWN0_MCU_register_clear();
         XDATA[MCU_REGISTER_BASE_ADDRESS + 0x40] = 0x50;
         XDATA[MCU_REGISTER_BASE_ADDRESS + 0x41] = 0x01;
@@ -178,8 +176,90 @@ uint16_t init_something_in_MCU(void){
     return unknown_return_value;
 }
 
+void init_ADC(void){
+    SWITCH_ADC_BK();
+
+    // idk what that does
+    // but it look like a some sort of security check or something?
+    uint8_t read_unknown_reg = reg_read(ADC_UNKNOWN_INIT_RELATED_REGISTER8);
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER8, read_unknown_reg | 0x80);
+
+    reg_write(ADC_CLPACE, 0x10);
+    reg_write(ADC_CLDUR, 0x8);
+
+    reg_write(ADC_FCOEF, 0x9);
+
+    reg_write(ADC_VCOCTRL, ADC_VCOCTRL_SETCNT_USED0 | ADC_VCOCTRL_DPL_S_USED0);
+
+    reg_write(ADC_SOG_LVL, ADC_SOG_LVL_SOG_LVL_170mV);
+
+    reg_write(ADC_PLLCTRLV, ADC_PLLCTRLV_IQSET_TH_USED0 | ADC_PLLCTRLV_IQCLR_TH_USED0 | ADC_PLLCTRLV_WDTOL_USED0);
+
+    // this register are probably used/named differently for TSUM1PFR
+    reg_write(ADC_DVI_PHR, 0);
+    reg_write(ADC_DVI_PHG, 0);
+    reg_write(ADC_DVI_PHB, 0);
+    reg_write(ADC_DVI_ERST, 0);
+    reg_write(ADC_DVI_ERTH, ADC_DVI_ERTH_USED0); // this is weird
+    reg_write(ADC_TESTEN, ADC_TESTEN_ENABLE); // also this is very weird
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER1, 0x20); // also this is very weird
+    reg_write(ADC_TESTMOD, ADC_TESTMOD_TESTMOD_USED0); // ... i have no words
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER4, 0x0F);
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER2, 0);
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER6, 0x10);
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER5, 0x40);
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER3, 0);
+
+    reg_write(ADC_SARCTRL3, 0b110);
+    reg_write(ADC_SARCTRL4, 0b100);
+
+    // this writes are quite interesting...
+    // looks like it is trying to increase MCU clock
+    // and that 0xBF value is seems like a hardware status value that indicates what could be set?
+    // maybe 0xBF means hardware is supporting fast spi read?
+    uint8_t final_ADC_MISC_value;
+    if(UNKNOWN_MCU_REGISTER_SAVED_VAR_042E == 0xBF){
+        reg_write(ADC_MISC, ADC_MISC_UNKNOWN_USED0 | ADC_MISC_MCUPLL_CLK_SEL_x1 | ADC_MISC_SPI_FRD_EN_FLAG | ADC_MISC_MCUPLL_CLK_SEL_USED0);
+        delay_ms(1);
+        reg_write(ADC_MISC, ADC_MISC_UNKNOWN_USED1 | ADC_MISC_MCUPLL_CLK_SEL_x2 | ADC_MISC_SPI_FRD_EN_FLAG | ADC_MISC_MCUPLL_CLK_SEL_USED0); 
+        delay_ms(1);
+        final_ADC_MISC_value = ADC_MISC_UNKNOWN_USED0 | ADC_MISC_MCUPLL_CLK_SEL_x2 | ADC_MISC_SPI_FRD_EN_FLAG | ADC_MISC_MCUPLL_CLK_SEL_USED0;
+    }else{
+        reg_write(ADC_MISC, ADC_MISC_UNKNOWN_USED0 | ADC_MISC_MCUPLL_CLK_SEL_x1 | ADC_MISC_MCUPLL_CLK_SEL_USED0);
+        delay_ms(1);
+        reg_write(ADC_MISC, ADC_MISC_UNKNOWN_USED1 | ADC_MISC_MCUPLL_CLK_SEL_x2 | ADC_MISC_MCUPLL_CLK_SEL_USED0); 
+        delay_ms(1);
+        final_ADC_MISC_value = ADC_MISC_UNKNOWN_USED0 | ADC_MISC_MCUPLL_CLK_SEL_x2 | ADC_MISC_MCUPLL_CLK_SEL_USED0;
+    }
+    reg_write(ADC_MISC, final_ADC_MISC_value);
+
+    reg_write(ADC_SARCTRL1, ADC_SARCTRL1_SA_SMPMD_FLAG);
+
+    reg_write(ADC_GPIO_I_SEL, reg_read(ADC_GPIO_I_SEL) | 0x0C); // idk what that is
+
+    reg_write(ADC_UNKNOWN_INIT_RELATED_REGISTER7, 0x18); // ???
+
+    reg_write(ADC_TESTEN, 0);
+
+    SWITCH_DIP_BK();
+    return;
+}
+
+void init_TCON(void){
+    SWITCH_TCON_BK();
+
+    reg_write(TCON_OFC1, TCON_OFC1_EEF_FLAG);
+    reg_write16(TCON_GAVST, 0x06); // ???
+    reg_write16(TCON_GAVEND, 0x0408); // ???
+    reg_write(TCON_CACTRL, TCON_CACTRL_GAES_FLAG);
+
+    SWITCH_DIP_BK();
+
+    return;
+}
+
 void init_DIP(void){
-    software_reset_DIP();
+    software_reset_external_devices();
     SWITCH_DIP_BK();
     reg_write(DIP_PDMD, DIP_PDMD_GCLK_APDLA);
     reg_write(DIP_TEST, 0);
@@ -220,5 +300,50 @@ void init_DIP(void){
     reg_write(DIP_LPLL_CTL2, DIP_LPLL_CTL2_LP_ICTROL_USED_UNKNOWN | DIP_LPLL_CTL2_LP_K_DIV1);
     
     reg_write16(DIP_LPLL_STEP, 0x44); // idk why this value is used here
-    reg_write16(DIP_LPLL_SPAN, 0x1CC); // idk why this value is used here
+    reg_write16(DIP_LPLL_SPAN, 0x01CC); // idk why this value is used here
+
+    reg_write(DIP_DITHCTRL, 0);
+    reg_write(DIP_DITHCOEF, DIP_DITHCOEF_TL_11 | DIP_DITHCOEF_TR_10 | DIP_DITHCOEF_BL_01 | DIP_DITHCOEF_BR_00);
+    reg_write(DIP_TRFN, DIP_TRFN_DT1_FLAG | DIP_TRFN_DRT_FLAG);
+
+    reg_write(DIP_DVI_DDCEN, 0); // ??? maybe for being sure the firmware does not break the dvi enabled SoC's?
+
+    reg_write(DIP_MISCFC, DIP_MISCFC_DEGP_FLAG | DIP_MISCFC_VSGR_FLAG | DIP_MISCFC_AFT_FLAG);
+
+    reg_write(DIP_BRC, DIP_BRC_BRC_FLAG);
+
+    reg_write(DIP_CNTR, DIP_CNTR_CNTR_FLAG | DIP_CNTR_CNREN);
+
+    reg_write(DIP_FWC, 0);
+
+    reg_write(DIP_FTAPEN, DIP_FTAPEN_FFSEL_3TAP);
+    reg_write(DIP_sRGB12, 0);
+    reg_write(DIP_sRGB13, 0x40);
+    reg_write(DIP_sRGB21, 0x88);
+    reg_write(DIP_sRGB23, 0x48);
+
+    reg_write(DIP_ATOCTRL, DIP_ATOCTRL_ATOE_FLAG); // auto pos
+    reg_write(DIP_ATPCTRL, DIP_ATPCTRL_ATPE_FLAG | DIP_ATPCTRL_APMASK_USED); // auto phase
+    reg_write(DIP_ATGCTRL, 0); // auto gain (disabled)
+    reg_write(DIP_ATPTTH, 0x1C); // auto phase related
+    reg_write(DIP_AOVDV, 0x40); // auto pos related
+
+    reg_write(DIP_LMARGINH, 0x30);
+    reg_write(DIP_LMARGINSCC, 0x20);
+
+    reg_write(DIP_INTCTROL, DIP_INTCTROL_HSPM_FLAG); // interrupt control (this is makes no sense but firmware does it)
+    reg_write(DIP_INTPULSE, 0x0F);
+    reg_write(DIP_INTENA, 0);
+
+    reg_write(DIP_HSTOL, DIP_HSTOL_HSTOL_USED1);
+    reg_write(DIP_VSTOL, DIP_VSTOL_VSTOL_USED1);
+
+    reg_write(DIP_HSPRD_HIGH_BYTE, 0); // ???
+
+    reg_write(DIP_DVICKTH, 0x1E); // im not sure this register is related to dvi
+
+    UNKNOWN_VAR_0409 = reg_read(DIP_UNKNOWN_INIT_SAVED_REGISTER);
+
+    init_ADC();
+
 }

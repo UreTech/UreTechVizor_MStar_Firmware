@@ -16,7 +16,9 @@
 #define UNKNOWN_COUNTER_0402 XDATA[0x0402]   // ???
 #define UNKNOWN_FLAGS_0405 XDATA[0x0405]   // ??? bit0: ???
 #define UNKNOWN_FLAGS_0406 XDATA[0x0406]   // ??? bit7: ???
+#define UNKNOWN_VAR_0409 XDATA[0x0409]   // ??? used in DIP init
 #define UNKNOWN_COUNTER_040F XDATA[0x040F]   // ???
+#define UNKNOWN_MCU_REGISTER_SAVED_VAR_042E XDATA[0x042E]   // maybe this is some sort of SoC id for versioning?
 #define UNKNOWN_FLAGS_0474 XDATA[0x0474]   // ???
 #define EVENT_FLAGS XDATA[0x0475]   // bit0: INT0 event, bit1/3: ???, bit6: ???
 #define EVENT_042D XDATA[0x042D]    // ???

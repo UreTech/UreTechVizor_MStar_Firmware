@@ -11,7 +11,7 @@ void _UNKNOWN0_MCU_register_clear(void)
     }
 }
 
-uint16_t _UNKNOWN0_MCU_register_setup(uint32_t val){
+uint16_t _UNKNOWN0_MCU_register_something(uint32_t val){
     _UNKNOWN0_MCU_register_clear();
 
     XDATA[MCU_REGISTER_BASE_ADDRESS + 0x40] = 0xAB;

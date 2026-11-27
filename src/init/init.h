@@ -21,10 +21,10 @@ void boot_init_timers(void);
 void boot_init_uart(void);
 
 // init software registers
-void software_reset_DIP(void);
+void software_reset_external_devices(void);
 
 // ...
-uint16_t init_something_in_MCU(void);
+uint16_t do_something_in_MCU(void);
 
 // init dip
 void init_DIP(void);

@@ -7,6 +7,7 @@
 #include <registers.h>
 #include <init/init.h>
 #include <variables.h>
+#include <timer/timer.h>
 
 // boot init for SoC
 uint8_t __sdcc_external_startup(void)
@@ -156,9 +157,9 @@ void main(void)
     
     // init
     boot_init();
-    software_reset_DIP();
-    uint8_t result_low_mcu = init_something_in_MCU();
-    
+    software_reset_external_devices();
+    uint8_t result_low_mcu = do_something_in_MCU();
+    wait_int0(200);
     
     for (;;) {
         reg_write(0x1, 0x0);
